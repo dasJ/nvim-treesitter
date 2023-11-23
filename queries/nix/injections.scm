@@ -21,15 +21,18 @@
   (#match? @_func "(^|\\.)match$")
   (#set! injection.combined))
 
-(binding
-  attrpath: (attrpath (identifier) @_path)
-  expression: [
-    (string_expression 
-      ((string_fragment) @injection.content (#set! injection.language "bash")))
-    (indented_string_expression 
-      ((string_fragment) @injection.content (#set! injection.language "bash")))
-  ]
-  (#match? @_path "(^\\w+(Phase|Hook)|(pre|post)[A-Z]\\w+|script)$"))
+(apply_expression
+  function: (_) @_func
+  argument: (_ (_)* (_ (_)* (binding
+    attrpath: (attrpath (identifier) @_path)
+    expression: [
+      (string_expression 
+        ((string_fragment) @injection.content (#set! injection.language "bash")))
+      (indented_string_expression 
+        ((string_fragment) @injection.content (#set! injection.language "bash")))
+    ])))
+  (#match? @_func "(^\\w+(Phase|Hook)|(pre|post)[A-Z]\\w+|script)$")
+  (#set! injection.combined))
 
 (apply_expression
   function: (_) @_func
